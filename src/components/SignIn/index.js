@@ -1,24 +1,25 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
+
+import { SignUpLink } from '../SignUp';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 
-const SignUpPage = () => {
+const SignInPage = () => {
   return (
     <div>
-      <h1>Sign Up</h1>
-      <SignUpForm />
+      <h1>Sign In</h1>
+      <SignInForm />
+      <SignUpLink />
     </div>
   )
 };
 
-const SignUpFormBase = (props) => {
+const SignInFormBase = (props) => {
   const initialState = {
-    username: '',
     email: '',
     password: '',
-    passwordConfirmation: '',
     error: null
   };
 
@@ -33,7 +34,7 @@ const SignUpFormBase = (props) => {
 
   const onSubmit = (e) => {
     props.firebase
-      .doCreateUserWithEmailAndPassword(email, password)
+      .doSignInWithEmailAndPassword(email, password)
       .then(authUser => {
         setField(initialState);
         props.history.push(ROUTES.HOME);
@@ -43,22 +44,11 @@ const SignUpFormBase = (props) => {
     e.preventDefault();
   };
 
-  const { username, email, password, passwordConfirmation, error } = fields;
-  const isInvalid =
-    password !== passwordConfirmation ||
-    password === '' ||
-    email === '' ||
-    username === '';
+  const { email, password, error } = fields;
+  const isInvalid = password === '' || email === ''
 
   return (
     <form onSubmit={onSubmit}>
-      <input
-        name="username"
-        value={username}
-        onChange={onChangeField}
-        type="text"
-        placeholder="Full Name"
-      />
       <input
         name="email"
         value={email}
@@ -73,13 +63,6 @@ const SignUpFormBase = (props) => {
         type="password"
         placeholder="Password"
       />
-      <input
-        name="passwordConfirmation"
-        value={passwordConfirmation}
-        onChange={onChangeField}
-        type="password"
-        placeholder="Password Confirmation"
-      />
       <button type="submit" disabled={isInvalid}>Sign Up</button>
 
       { error && <p>{ error.message }</p> }
@@ -87,17 +70,11 @@ const SignUpFormBase = (props) => {
   )
 };
 
-const SignUpLink = () => (
-  <p>
-    Don't have an account? <Link to={ROUTES.SIGN_UP}>Sign Up</Link>
-  </p>
-);
-
-const SignUpForm = compose(
+const SignInForm = compose(
   withRouter,
   withFirebase,
-)(SignUpFormBase);
+)(SignInFormBase);
 
-export default SignUpPage;
+export default SignInPage;
 
-export { SignUpForm, SignUpLink };
+export { SignInForm };
