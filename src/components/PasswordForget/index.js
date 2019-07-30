@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 
 const ForgetPasswordPage = () => (
@@ -15,8 +16,6 @@ const PasswordForgetFormBase = (props) => {
     error: null
   };
 
-  const isInvalid = email === '';
-
   // Hooks
   const [fields, setField] = React.useState(initialState);
   const onChangeField = (e) => {
@@ -26,13 +25,36 @@ const PasswordForgetFormBase = (props) => {
     })
   };
 
-  const onSubmit = () => {
+  const onSubmit = (e) => {
+    e.preventDefault();
 
+    props.firebase
+      .doPasswordReset(fields.email)
+      .then(() => {
+        setField(initialState);
+      })
+      .catch((error) => {
+        setField({ error });
+      });
   }
 
+  const { email, error } = fields;
+  const isInvalid = email === '';
+
   return (
-    <form>
-      <h1>This will be a form!</h1>
+    <form onSubmit={onSubmit}>
+      <input
+        name="email"
+        value={email}
+        onChange={onChangeField}
+        type="text"
+        placeholder="Email Address"
+      />
+      <button disabled={isInvalid} type="submit">
+        Reset My Password
+      </button>
+
+      { error && <p>{ error.message }</p>}
     </form>
   );
 };

@@ -1,16 +1,18 @@
 import React from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 
 import { SignUpLink } from '../SignUp';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
+import { PasswordForgetLink } from '../PasswordForget';
 
 const SignInPage = () => {
   return (
     <div>
       <h1>Sign In</h1>
       <SignInForm />
+      <PasswordForgetLink />
       <SignUpLink />
     </div>
   )
@@ -63,7 +65,7 @@ const SignInFormBase = (props) => {
         type="password"
         placeholder="Password"
       />
-      <button type="submit" disabled={isInvalid}>Sign Up</button>
+      <button type="submit" disabled={isInvalid}>Sign In</button>
 
       { error && <p>{ error.message }</p> }
     </form>
